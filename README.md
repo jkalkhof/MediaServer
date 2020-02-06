@@ -1,7 +1,7 @@
 # MediaServer
 ### Media Server designed to run on a RaspberryPi or other dedicated server
-  
-  
+
+
 ### Installation Instructions:  
 
 ##### Install mongodb
@@ -67,7 +67,7 @@ Run `sudo crontab -e` and add `@reboot /home/pi/MediaServer/start_media_server.s
 
 ### Install nginx
 Run `sudo apt-get install nginx` and configure a new site with `sudo nano /etc/nginx/sites-available/media-server`. Paste in the config below and make required changes to the paths to point nginx at your file locations.
-  
+
 ##### Nginx Sample Config  
 ```
 server {
@@ -90,4 +90,23 @@ server {
         uwsgi_pass unix:/tmp/media-server.sock;
     }
 }
+```
+
+#### Apache2 Sample Config
+```
+<VirtualHost *:80>
+    ServerName media-server
+    ServerAlias media-server
+
+		# socket feature needs version 2.4.9
+		#ProxyPass / unix:/tmp/media-server.sock
+
+		ProxyPassMatch ^/movies !
+		ProxyPass / http://127.0.0.1:3031/
+
+		Alias "/movies" "/var/www/drive/movies"
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
 ```
