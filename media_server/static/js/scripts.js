@@ -2,7 +2,7 @@ window.onload = () => {
 	if (document.getElementById('results')){
 		load_content(
 			'movies',
-			'list'	
+			'list'
 		)
 	}
 	if (document.getElementById('tagger')) {
@@ -10,11 +10,12 @@ window.onload = () => {
 	}
 };
 
-bodyonload = () => {	
+bodyonload = () => {
 
 };
 
 search = () => {
+	console.log('script: search');
 	let search = document.getElementById('search');
 	console.log(search.value);
 	if (search.value.length >= 3){
@@ -32,6 +33,7 @@ search = () => {
 };
 
 force_search = () => {
+	console.log('script: force_search');
 	// this is only called when the search button is pressed
 	load_content(
 		document.getElementsByClassName('selected')[0].classList.item(0),
@@ -40,6 +42,7 @@ force_search = () => {
 }
 
 rescan_folder = (elem) => {
+	console.log('script: rescan_folder');
 	let xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = () => {
 		if(xhr.readyState === XMLHttpRequest.DONE) {
@@ -51,6 +54,7 @@ rescan_folder = (elem) => {
 }
 
 collapse_content = (elem) => {
+	console.log('script: collapse_content');
 	jwplayer().remove();
 	let content = elem.parentElement.children[1];
 	content.innerHTML = "";
@@ -66,6 +70,7 @@ build_jwplayer = (elem,fname) => {
 }
 
 expand_video = (event) => {
+	console.log('script: expand_video');
 	let elem = event.target||event.srcElement;
 	let content = elem.parentElement.children[1];
 	let type = document.getElementsByClassName('selected')[0].classList[0];
@@ -90,6 +95,7 @@ expand_video = (event) => {
 }
 
 toggle_item = (event) => {
+	console.log('script: toggle_item');
 	let elem = event.target||event.srcElement;
 	let content = Array.from(elem.parentElement.children);
 
@@ -114,6 +120,7 @@ toggle_item = (event) => {
 }
 
 build_item = (entry,tv) => {
+	console.log('script: build_item');
 	let item = document.createElement('div');
 	item.className = "item";
 	if (tv) item.style.display = 'none';
@@ -121,7 +128,8 @@ build_item = (entry,tv) => {
 	let header = document.createElement('div');
 	header.className = 'header hide';
 	header.id = entry['file'];
-	header.innerText = entry['name'];
+	// header.innerText = entry['name'];
+	header.innerText = entry['plot_group']+':'+entry['plot'];
 	header.addEventListener('click', event => {
 		expand_video(event);
 	});
@@ -172,6 +180,7 @@ build_series = entry => {
 }
 
 load_content = (category,mode) => {
+	console.log('script: load_content');
 	let xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = () => {
 		if(xhr.readyState === XMLHttpRequest.DONE) {
@@ -189,7 +198,7 @@ load_content = (category,mode) => {
 			}
 			else if (category == 'tv') {
 				data.forEach( (entry) => {
-					entry = JSON.parse(entry);				
+					entry = JSON.parse(entry);
 					let item = build_item( entry, true);
 
 					let series = results.querySelector(`#${entry['series'].replace(/^/g, 'm').replace(/[\',]/g, '').replace(/[\.\s]/g, '-').toLowerCase()}`);
@@ -210,7 +219,7 @@ load_content = (category,mode) => {
 					} else {
 						let series = build_series(entry);
 						let season = build_season(entry);
-						
+
 						season.appendChild(item);
 
 						series.appendChild(season);
@@ -243,6 +252,7 @@ load_content = (category,mode) => {
 }
 
 switch_tab = (elem) => {
+	console.log('script: switch_tab');
 	let category;
 	if (elem.classList.contains('movies')) {
 		category = 'movies';

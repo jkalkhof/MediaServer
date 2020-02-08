@@ -14,7 +14,7 @@ const BTN_MARGIN = 5;
 
 
 // https://api.themoviedb.org/3/search/movie?api_key=3961335a9828f92383fbd0ec65f09c03&language=en-US&query=Fight%20Club&page=1&include_adult=false&region=US&year=1999&primary_release_year=1999
-// tmdb movie search fields: 
+// tmdb movie search fields:
 // api_key 				required
 // language
 // query  				required
@@ -23,7 +23,7 @@ const BTN_MARGIN = 5;
 // region
 // year
 // primary_release_year
-// 
+//
 // https://api.themoviedb.org/3/search/tv?api_key=3961335a9828f92383fbd0ec65f09c03&language=en-US&query=Game%20of%20Thrones&page=1&first_air_date_year=2009
 // tmdb tv search fields
 // api_key 				required
@@ -44,13 +44,15 @@ class FileTagger {
 	}
 
 	make_state_btn (num,text) {
+		console.log('file_tagger: make_state_btn');
+		
 		let btn = mkelem('button');
 		btn.innerText = `${text}`;
 		btn.addEventListener('click', (event) => {
 			this.update_state(num);
 		});
 		btn.style = `height:${ BTN_HEIGHT }px;
-					 width:${ BTN_WIDTH }px; 
+					 width:${ BTN_WIDTH }px;
 					 top:${ HEIGHT - (BTN_HEIGHT + BTN_MARGIN) }px;
 					 left:${ (num * BTN_WIDTH) + ((num+1) * BTN_MARGIN) }px;
 					 position:absolute;`;
@@ -73,7 +75,7 @@ class FileTagger {
 		xhr.open('POST', "get-movie-details/search?language=en-US&query=Fight%20Club&page=1&include_adult=false&region=US&year=1999&primary_release_year=1999", true)
 		xhr.send(null);
 
-		
+
 		// language
 		// query  				required
 		// page
@@ -81,7 +83,7 @@ class FileTagger {
 		// region
 		// year
 		// primary_release_year
-		
+
 	}
 
 	search_movies () {
@@ -146,4 +148,3 @@ class FileTagger {
 		this.elem.appendChild( this.make_state_btn(State.SEARCH, "Search") );
 	}
 }
-

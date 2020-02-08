@@ -26,6 +26,14 @@ class Movie(MongoModel):
 	file                 = CharField()
 	name                 = CharField()
 	file_id              = CharField(primary_key=True)
+
+	# fields for AtmosphericDataSolutions weather videos
+	ensemble 			= CharField()
+	boundary_condition  = CharField()
+	init_date 			= DateTimeField()
+	plot				= CharField()
+	plot_group 			= CharField()
+
 	# fields below this point are for TMDB movie queries against a movie id
 	# GET 	/movie/{movie_id}
 	# https://api.themoviedb.org/3/movie/{movie_id}?api_key=<<api_key>>&language=en-US
@@ -83,4 +91,4 @@ class Book(MongoModel):
 #	 episode = FieldProperty(schema.String(required=True))
 
 
-# Mapper.compile_all() 
+# Mapper.compile_all()
