@@ -1,4 +1,6 @@
 from flask import Flask,render_template,request,url_for,redirect,jsonify,flash,abort, send_from_directory,send_file,Response
+from flask_cors import CORS
+from flask_cors import cross_origin
 from werkzeug import secure_filename
 import os
 from os import path,makedirs,rename
@@ -60,6 +62,7 @@ def search(collection=None,search_string=None):
 	print('basic: search: plot_group:', plot_group)
 	print('basic: search: plot:', plot)
 
+
 	if collection is not None:
 		if ((ensemble is not None) and
 			(boundary_condition is not None) and
@@ -77,7 +80,13 @@ def search(collection=None,search_string=None):
 			# 	print('item[',listIndex,']:',listEntry)
 
 			# https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
-			return json.dumps(listData, default=json_util.default)
+			# return json.dumps(listData, default=json_util.default)
+
+			# response = jsonify({'some': 'data'})
+			response = jsonify(listData)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
+
 		else:
 			return dumps(search_db(collection=collection,search_string=search_string))
 	else:
