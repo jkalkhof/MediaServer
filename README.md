@@ -7,6 +7,8 @@
 ##### Install mongodb
 ```
 $ sudo apt-get install mongodb
+
+sudo yum install mongodb
 ```
 Create databases with names `tv`, `movies`, and `books`
 ```
@@ -23,6 +25,7 @@ $ sudo apt-get install python3.4 virtualenv
 Clone repo
 ```
 $ git clone https://github.com/jasonwarta/MediaServer.git
+$ git clone https://github.com/jkalkhof/MediaServer.git
 ```
 set up virtual environment and install package
 ```
