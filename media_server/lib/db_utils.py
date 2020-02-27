@@ -30,13 +30,22 @@ def get_results(Object=None,query_obj=None,sort=None):
 		return None
 
 def get_results_no_jsonencode(Object=None,query_obj=None,sort=None):
+	# Object should be: media_server.lib.models.Movie
 	if Object is not None and query_obj is not None:
+		# print("get_results_no_jsonencode: Object:",Object)
+		# print("get_results_no_jsonencode: query_obj:",query_obj)
+
 		results = Object.objects.raw(query_obj).order_by(sort)
+
+		# print("get_results_no_jsonencode: results:",results)
+
 		json_results = []
 		for item in results:
 			# avoid double encoding json strings
 			# https://api.mongodb.com/python/current/api/bson/son.html
+			# print("get_results_no_jsonencode: results: item:",item)
 			json_results.append(item.to_son().to_dict())
+		# print("get_results_no_jsonencode:",json_results)
 		return json_results
 	else:
 		print("get_results called without an Object or query")
@@ -65,6 +74,10 @@ def search_db_movies_extended(ensemble=None,boundary_condition=None,init_date=No
 	input_format="%Y-%m-%dT%H:%M:%S"
 	date_time_obj = datetime.strptime(init_date, input_format)
 
+	# {"plot":plot},\
+
+	# STRATEGY - build up the query in parts, testing as we go...
+
 	return get_results_no_jsonencode(Movie, {"$and": [\
 		{"ensemble" : ensemble},\
 		{"boundary_condition":boundary_condition},\
@@ -72,6 +85,8 @@ def search_db_movies_extended(ensemble=None,boundary_condition=None,init_date=No
 		{"plot_group":plot_group},\
 		{"plot":plot},\
 		]},[('plot',ASCENDING)])
+
+	# {"plot":{'$regex':plot}},\
 
 def search_db(collection=None, search_string=None):
 	if search_string is not None:

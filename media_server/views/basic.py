@@ -30,6 +30,7 @@ def admin():
 @app.route('/rescan_dir/<folder>',methods=['POST'])
 def rescan_dir(folder=None):
 	if folder == 'movies':
+		# scans directory from /home/wrfuser/source/ads/MediaServer/media_server/movies
 		update_movies('media_server/movies')
 		return "success"
 	elif folder == 'tv':
@@ -51,10 +52,13 @@ def search(collection=None,search_string=None):
 	# plot
 	ensemble = request.args.get('ensemble', default = '001', type = str)
 	boundary_condition = request.args.get('boundary_condition', default = 'gfs', type = str)
-	init_date = request.args.get('init_date', default = '2019-11-14T00:00:00', type = str)
+	init_date = request.args.get('init_date', default = None, type = str)
 	plot_group = request.args.get('plot_group', default = None, type = str)
 	plot = request.args.get('plot', default = None, type = str)
 
+	print('basic: search: collection:', collection)
+	print('basic: search_string:',search_string)
+	
 	# init_date uses iso8601 for date/time example:"2019-11-14T00:00:00"
 	print('basic: search: ensemble:', ensemble)
 	print('basic: search: boundary_condition:', boundary_condition)
@@ -76,13 +80,7 @@ def search(collection=None,search_string=None):
 				plot_group=plot_group,\
 				plot=plot)
 
-			# for listIndex, listEntry in enumerate(listData):
-			# 	print('item[',listIndex,']:',listEntry)
-
 			# https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
-			# return json.dumps(listData, default=json_util.default)
-
-			# response = jsonify({'some': 'data'})
 			response = jsonify(listData)
 			response.headers.add('Access-Control-Allow-Origin', '*')
 			return response
