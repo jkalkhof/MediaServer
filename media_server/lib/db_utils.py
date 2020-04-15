@@ -161,6 +161,18 @@ def update_books(file_path=None):
 		).save()
 	return "success"
 
+def remove_movies(file_path=None,filename=None):
+	print ('db_utils: remove_movies')
+
+	if (not (filename is None)):
+			Movie(
+				file = filename,
+				# file_id is primary key!
+				file_id = filename,
+			).delete()
+
+	return "success"
+
 def update_movies(file_path=None,filename=None):
 	print ('db_utils: update_movies')
 

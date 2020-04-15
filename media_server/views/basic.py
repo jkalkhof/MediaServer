@@ -27,6 +27,16 @@ def admin():
 		title='Admin'
 	)
 
+@app.route('/remove_file/<folder>/<filename>',methods=['POST'])
+def remove_file(folder=None,filename=None):
+	if folder == 'movies':
+		if filename is not None:
+			print('remove_file: filename:',filename)
+			remove_movies('media_server/movies',filename)
+			return "success"
+			
+	return "error"
+
 @app.route('/rescan_dir/<folder>',methods=['POST'])
 @app.route('/rescan_dir/<folder>/<filename>',methods=['POST'])
 def rescan_dir(folder=None,filename=None):
