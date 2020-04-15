@@ -16,10 +16,24 @@ def get_results(Object=None,query_obj=None,sort=None):
 		results = Object.objects.raw(query_obj).order_by(sort)
 		json_results = []
 		for item in results:
+			# get_results: <Movie object>
 			# print('get_results:',item)
-			# print('get_results:(to_son)',item.to_son())
+
+			# convert to SON - the Serialized Ocument Notation.
+			# https://api.mongodb.com/python/current/api/bson/son.html
+			# get_results:(to_son) SON([('path', 'media_server/movies/51702702.mp4'), ('file', '51702702.mp4'), ('name', '51702702'), ('_id', '51702702.mp4'), ('ensemble', '001'), ('boundary_condition', 'gfs'), ('init_date', datetime.datetime(2019, 11, 14, 0, 0)), ('plot', 'Incoming Short-wave Rad/10m Wind'), ('plot_group', 'Near Surface Plots'), ('_cls', 'media_server.lib.models.Movie')])
+			item_son = item.to_son()
+			# print('get_results:(to_son)',item_son)
+
+			date_time_obj = item_son['init_date']
+			output_format="%Y-%m-%dT%H:%M:%S"
+			dateStr = date_time_obj.strftime(output_format)
+			item_son['init_date'] = dateStr
+
+			print('get_results:(to_son)',item_son)
+
 			# print('get_results:(to_son.to_dict)',item.to_son().to_dict())
-			json_results.append(dumps(item.to_son()))
+			json_results.append(dumps(item_son))
 
 			# avoid double encoding json strings
 			# https://api.mongodb.com/python/current/api/bson/son.html
@@ -43,8 +57,20 @@ def get_results_no_jsonencode(Object=None,query_obj=None,sort=None):
 		for item in results:
 			# avoid double encoding json strings
 			# https://api.mongodb.com/python/current/api/bson/son.html
+
+			# get_results_no_jsonencode: results: item: <Movie object>
 			# print("get_results_no_jsonencode: results: item:",item)
-			json_results.append(item.to_son().to_dict())
+
+			item_son = item.to_son()
+
+			date_time_obj = item_son['init_date']
+			output_format="%Y-%m-%dT%H:%M:%S"
+			dateStr = date_time_obj.strftime(output_format)
+			item_son['init_date'] = dateStr
+						
+			print('get_results_no_jsonencode:(to_son)',item_son)
+
+			json_results.append(item_son.to_dict())
 		# print("get_results_no_jsonencode:",json_results)
 		return json_results
 	else:
@@ -56,7 +82,17 @@ def get_all(Object=None,sort=None):
 		results = Object.objects.all().order_by(sort)
 		json_results = []
 		for item in results:
-			json_results.append(dumps(item.to_son()))
+
+			item_son = item.to_son()
+
+			date_time_obj = item_son['init_date']
+			output_format="%Y-%m-%dT%H:%M:%S"
+			dateStr = date_time_obj.strftime(output_format)
+			item_son['init_date'] = dateStr
+
+			print('get_all:(to_son)',item_son)
+
+			json_results.append(dumps(item_son))
 		return json_results
 	else:
 		print("get_all was called without an Object")

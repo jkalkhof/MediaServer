@@ -129,7 +129,7 @@ build_item = (entry,tv) => {
 	header.className = 'header hide';
 	header.id = entry['file'];
 	// header.innerText = entry['name'];
-	header.innerText = entry['plot_group']+':'+entry['plot'];
+	header.innerText = entry['init_date']+':'+entry['plot_group']+':'+entry['plot'];
 	header.addEventListener('click', event => {
 		expand_video(event);
 	});
