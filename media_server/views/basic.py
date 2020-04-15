@@ -28,10 +28,15 @@ def admin():
 	)
 
 @app.route('/rescan_dir/<folder>',methods=['POST'])
-def rescan_dir(folder=None):
+@app.route('/rescan_dir/<folder>/<filename>',methods=['POST'])
+def rescan_dir(folder=None,filename=None):
 	if folder == 'movies':
-		# scans directory from /home/wrfuser/source/ads/MediaServer/media_server/movies
-		update_movies('media_server/movies')
+		if filename is not None:
+			print('rescan_dir: filename:',filename)
+			update_movies('media_server/movies',filename)
+		else:
+			# scans directory from /home/wrfuser/source/ads/MediaServer/media_server/movies
+			update_movies('media_server/movies')
 		return "success"
 	elif folder == 'tv':
 		update_tv('media_server/tv')
@@ -58,7 +63,7 @@ def search(collection=None,search_string=None):
 
 	print('basic: search: collection:', collection)
 	print('basic: search_string:',search_string)
-	
+
 	# init_date uses iso8601 for date/time example:"2019-11-14T00:00:00"
 	print('basic: search: ensemble:', ensemble)
 	print('basic: search: boundary_condition:', boundary_condition)

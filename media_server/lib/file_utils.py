@@ -24,7 +24,7 @@ def name(fname):
 
 def list_files(folder):
 	list_of_files =[]
-	stdout.write("Indexing "+folder+"\n")
+	stdout.write("list_files: Indexing "+folder+"\n")
 	for root,dirs,files in walk(folder):
 		path = root.split(sep)
 		for file in files:
@@ -38,7 +38,15 @@ def list_files(folder):
 	list_of_files.sort(key=operator.itemgetter('name'))
 	return list_of_files
 
-def rescan_base_dir(file_path=None):
+def rescan_base_dir(file_path=None,filename=None):
 	if file_path is not None:
-		files_list = list_files(file_path)
+		if filename is not None:
+			files_list = []
+			files_list.append({
+				'path': file_path+'/'+filename,
+				'file': filename,
+				'name': filename
+			})
+		else:
+			files_list = list_files(file_path)
 		return files_list

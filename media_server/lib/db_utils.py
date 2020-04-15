@@ -67,7 +67,7 @@ def get_results_no_jsonencode(Object=None,query_obj=None,sort=None):
 			output_format="%Y-%m-%dT%H:%M:%S"
 			dateStr = date_time_obj.strftime(output_format)
 			item_son['init_date'] = dateStr
-						
+
 			print('get_results_no_jsonencode:(to_son)',item_son)
 
 			json_results.append(item_son.to_dict())
@@ -161,12 +161,10 @@ def update_books(file_path=None):
 		).save()
 	return "success"
 
-def update_movies(file_path=None):
-
-
+def update_movies(file_path=None,filename=None):
 	print ('db_utils: update_movies')
 
-	files_list = rescan_base_dir(file_path)
+	files_list = rescan_base_dir(file_path,filename)
 
 	# check video files for metadata using ffprobe
 	for item in files_list:
