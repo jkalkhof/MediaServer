@@ -34,7 +34,7 @@ def remove_file(folder=None,filename=None):
 			print('remove_file: filename:',filename)
 			remove_movies('media_server/movies',filename)
 			return "success"
-			
+
 	return "error"
 
 @app.route('/rescan_dir/<folder>',methods=['POST'])
@@ -47,6 +47,9 @@ def rescan_dir(folder=None,filename=None):
 		else:
 			# scans directory from /home/wrfuser/source/ads/MediaServer/media_server/movies
 			update_movies('media_server/movies')
+		return "success"
+	elif folder == 'kmz':
+		update_kmz('media_server/kmz')
 		return "success"
 	elif folder == 'tv':
 		update_tv('media_server/tv')

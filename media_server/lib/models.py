@@ -62,6 +62,20 @@ class Movie(MongoModel):
 	vote_average         = Decimal128Field()
 	vote_count           = IntegerField()
 
+# Google Earth kmz files - rendered from original forecast images by ncwms and ads-filescanner
+class KMZ(MongoModel):
+	path                 = CharField()
+	file                 = CharField()
+	name                 = CharField()
+	file_id = CharField(primary_key=True)
+
+	# fields for AtmosphericDataSolutions weather videos
+	ensemble 			= CharField()
+	boundary_condition  = CharField()
+	init_date 			= DateTimeField()
+	plot				= CharField()
+	plot_group 			= CharField()
+	
 class TV(MongoModel):
 	path	= CharField()
 	file_id = CharField(primary_key=True)

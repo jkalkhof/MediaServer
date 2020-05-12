@@ -11,6 +11,9 @@ from media_server.lib.models import *
 import ffmpy, subprocess, json
 from datetime import *
 
+import zipfile
+import json
+
 def get_results(Object=None,query_obj=None,sort=None):
 	if Object is not None and query_obj is not None:
 		results = Object.objects.raw(query_obj).order_by(sort)
@@ -255,6 +258,72 @@ def update_movies(file_path=None,filename=None):
 		# ).save()
 
 	return "success"
+
+def verifyZipfileMetadata(zipfilepath, kmlfilename):
+
+	z=zipfile.ZipFile(zipfilepath,'r')
+
+	myMetadata = None
+
+	for fileIndex, info in enumerate(z.infolist()):
+		fname = info.filename
+
+		# print('zipinfo[',fileIndex,']:',info)
+		# zipinfo: <ZipInfo filename='wrfout_d03_2019-10-15_09:00:00.png' compress_type=deflate filemode='-rw-r--r--' file_size=217685 compress_size=217017>
+
+		if (info.filename == kmlfilename):
+			try:
+				# print('zipinfo[',fileIndex,']: comment:',info.comment)
+				jsonStr = str(info.comment, encoding='utf-8')
+				# print('zipinfo[',fileIndex,']: comment -> jsonStr:',jsonStr)
+				myMetadata = json.loads(jsonStr)
+				print('zipinfo[',fileIndex,']: comment -> myMetadata: init:',myMetadata['init'])
+				print('zipinfo[',fileIndex,']: comment -> myMetadata: ensemble:',myMetadata['ensemble'])
+				print('zipinfo[',fileIndex,']: comment -> myMetadata: boundary-condition:',myMetadata['boundary-condition'])
+				print('zipinfo[',fileIndex,']: comment -> myMetadata: plot_group:',myMetadata['plot_group'])
+				print('zipinfo[',fileIndex,']: comment -> myMetadata: plot:',myMetadata['plot'])
+
+				print('zipinfo[',fileIndex,']: filename:',info.filename)
+				print('zipinfo[',fileIndex,']: file_size:',info.file_size)
+				print('zipinfo[',fileIndex,']: compress_size:',info.compress_size)
+			except Exception as ex:
+				print('zipinfo: exception on file:',kmlfilename,' ex:',ex)
+
+	return myMetadata
+
+def update_kmz(file_path=None,filename=None):
+	print ('db_utils: update_kmz')
+
+	files_list = rescan_base_dir(file_path,filename)
+
+	# check video files for metadata using ffprobe
+	kmlfilename = 'ads-plot-timeseries.kml'
+	for item in files_list:
+		print('file:',item)
+
+		# TODO: use Zipfile to extract metadata from each file for database
+		myMetadata = verifyZipfileMetadata(item['path'],kmlfilename)
+
+		if not (myMetadata is None):
+			KMZ(
+				path    = item['path'],
+				file    = item['file'],
+				name    = item['name'],
+				# file_id is primary key!
+				file_id = item['file'],
+				# fields for AtmosphericDataSolutions weather videos
+				ensemble = myMetadata['ensemble'],
+				boundary_condition = myMetadata['boundary-condition'],
+				init_date = myMetadata['init'],
+				plot = myMetadata['plot'],
+				plot_group = myMetadata['plot_group']
+
+			).save()
+		else:
+			print('file:',item['name'],' metadata error!')
+
+	return "success"
+
 
 def update_tv(file_path=None):
 	files_list = rescan_base_dir(file_path)
