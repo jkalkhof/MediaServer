@@ -127,6 +127,32 @@ def search_db_movies_extended(ensemble=None,boundary_condition=None,init_date=No
 
 	# {"plot":{'$regex':plot}},\
 
+def search_db_kmz_extended(ensemble=None,boundary_condition=None,init_date=None,plot_group=None,plot=None):
+	print('search_db_kmz_extended: ensemble:',ensemble)
+	print('search_db_kmz_extended: boundary_condition:',boundary_condition)
+	print('search_db_kmz_extended: init_date:',init_date)
+	print('search_db_kmz_extended: plot_group:',plot_group)
+	print('search_db_kmz_extended: plot:',plot)
+
+	# convert init_date from iso8601 to datetime for query
+	# input_format="%Y-%m-%dT%H:%M:%S.%fZ"
+	input_format="%Y-%m-%dT%H:%M:%S"
+	date_time_obj = datetime.strptime(init_date, input_format)
+
+	# {"plot":plot},\
+
+	# STRATEGY - build up the query in parts, testing as we go...
+
+	return get_results_no_jsonencode(KMZ, {"$and": [\
+		{"ensemble" : ensemble},\
+		{"boundary_condition":boundary_condition},\
+		{"init_date":date_time_obj},\
+		{"plot_group":plot_group},\
+		{"plot":plot},\
+		]},[('plot',ASCENDING)])
+
+	# {"plot":{'$regex':plot}},\
+
 def search_db(collection=None, search_string=None):
 	if search_string is not None:
 		query = re.compile(search_string, re.IGNORECASE)
@@ -147,7 +173,7 @@ def search_db(collection=None, search_string=None):
 		if collection == 'movies':
 			return get_all(Movie,[('name',ASCENDING)])
 		elif collection == 'kmz':
-			return get_all(KMZ,[('name',ASCENDING)])			
+			return get_all(KMZ,[('name',ASCENDING)])
 		elif collection == 'tv':
 			return get_all(TV,[('series',ASCENDING)])
 		elif collection == 'books':
@@ -173,6 +199,18 @@ def remove_movies(file_path=None,filename=None):
 
 	if (not (filename is None)):
 			Movie(
+				file = filename,
+				# file_id is primary key!
+				file_id = filename,
+			).delete()
+
+	return "success"
+
+def remove_kmz(file_path=None,filename=None):
+	print ('db_utils: remove_kmz')
+
+	if (not (filename is None)):
+			KMZ(
 				file = filename,
 				# file_id is primary key!
 				file_id = filename,

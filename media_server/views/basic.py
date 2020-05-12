@@ -34,6 +34,11 @@ def remove_file(folder=None,filename=None):
 			print('remove_file: filename:',filename)
 			remove_movies('media_server/movies',filename)
 			return "success"
+	elif folder == 'kmz':
+		if filename is not None:
+			print('remove_file: filename:',filename)
+			remove_kmz('media_server/kmz',filename)
+			return "success"
 
 	return "error"
 
@@ -92,11 +97,19 @@ def search(collection=None,search_string=None):
 			(plot_group is not None) and
 			(plot is not None)):
 
-			listData = search_db_movies_extended(ensemble=ensemble,\
-				boundary_condition=boundary_condition,\
-				init_date=init_date,\
-				plot_group=plot_group,\
-				plot=plot)
+			listData = []
+			if collection == 'movies':
+				listData = search_db_movies_extended(ensemble=ensemble,\
+					boundary_condition=boundary_condition,\
+					init_date=init_date,\
+					plot_group=plot_group,\
+					plot=plot)
+			elif collection == 'kmz':
+				listData = search_db_kmz_extended(ensemble=ensemble,\
+					boundary_condition=boundary_condition,\
+					init_date=init_date,\
+					plot_group=plot_group,\
+					plot=plot)
 
 			# https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
 			response = jsonify(listData)

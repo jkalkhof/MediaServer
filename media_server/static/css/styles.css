@@ -7,6 +7,14 @@ body {
 #results {
 	margin-top:110px;
 }
+/*
+.search {
+	font-size:2em;
+}
+.button {
+	font-size: 2em;
+}
+*/
 .tabs {
 	position:fixed;
 	top:0;
