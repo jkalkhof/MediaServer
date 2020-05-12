@@ -196,6 +196,35 @@ load_content = (category,mode) => {
 					results.appendChild( build_item( JSON.parse(entry), false ) );
 				});
 			}
+			else if (category == 'kmz') {
+				data.forEach( (entry) => {
+					// instead of using build_item 
+					entry = JSON.parse(entry);
+
+					// see static/css/styles.css for definitions of header, content classes
+					let item = document.createElement('div');
+					item.className = "item";
+
+					let header = document.createElement('div');
+					header.className = 'header hide';
+					header.id = entry['file'];
+					header.innerText = entry['init_date']+':'+entry['plot_group']+':'+entry['plot'];
+
+					let a = document.createElement('a');
+					a.href = `kmz/${entry['file']}`;
+					a.innerText = entry['init_date']+' '+entry['plot']+' '+entry['name'];
+
+					header.innerHTML = a.outerHTML;
+
+					let content = document.createElement('div');
+					content.className = 'content';
+
+					item.appendChild(header);
+					item.appendChild(content);
+					results.appendChild(item);
+
+				});
+			}
 			else if (category == 'tv') {
 				data.forEach( (entry) => {
 					entry = JSON.parse(entry);
@@ -256,6 +285,8 @@ switch_tab = (elem) => {
 	let category;
 	if (elem.classList.contains('movies')) {
 		category = 'movies';
+	} else if (elem.classList.contains('kmz')) {
+		category = 'kmz';
 	} else if (elem.classList.contains('tv')) {
 		category = 'tv';
 	} else if (elem.classList.contains('books')) {

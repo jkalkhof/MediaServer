@@ -134,6 +134,8 @@ def search_db(collection=None, search_string=None):
 		if collection == 'movies':
 			# return get_results(Movie, {"name" : query},[('name',ASCENDING)])
 			return get_results(Movie, {"plot" : query},[('plot',ASCENDING)])
+		elif collection == 'kmz':
+			return get_results(KMZ, {"plot" : query},[('plot',ASCENDING)])
 		elif collection == 'tv':
 			return get_results(TV, {"name" : query},[('series',ASCENDING)])
 		elif collection == 'books':
@@ -144,6 +146,8 @@ def search_db(collection=None, search_string=None):
 	else:
 		if collection == 'movies':
 			return get_all(Movie,[('name',ASCENDING)])
+		elif collection == 'kmz':
+			return get_all(KMZ,[('name',ASCENDING)])			
 		elif collection == 'tv':
 			return get_all(TV,[('series',ASCENDING)])
 		elif collection == 'books':
