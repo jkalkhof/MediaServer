@@ -153,6 +153,30 @@ def search_db_kmz_extended(ensemble=None,boundary_condition=None,init_date=None,
 
 	# {"plot":{'$regex':plot}},\
 
+def search_db_gif_extended(ensemble=None,boundary_condition=None,init_date=None,plot_group=None,plot=None):
+	print('search_db_gif_extended: ensemble:',ensemble)
+	print('search_db_gif_extended: boundary_condition:',boundary_condition)
+	print('search_db_gif_extended: init_date:',init_date)
+	print('search_db_gif_extended: plot_group:',plot_group)
+	print('search_db_gif_extended: plot:',plot)
+
+	# convert init_date from iso8601 to datetime for query
+	# input_format="%Y-%m-%dT%H:%M:%S.%fZ"
+	input_format="%Y-%m-%dT%H:%M:%S"
+	date_time_obj = datetime.strptime(init_date, input_format)
+
+	# {"plot":plot},\
+
+	# STRATEGY - build up the query in parts, testing as we go...
+
+	return get_results_no_jsonencode(GIF, {"$and": [\
+		{"ensemble" : ensemble},\
+		{"boundary_condition":boundary_condition},\
+		{"init_date":date_time_obj},\
+		{"plot_group":plot_group},\
+		{"plot":plot},\
+		]},[('plot',ASCENDING)])
+
 def search_db(collection=None, search_string=None):
 	if search_string is not None:
 		query = re.compile(search_string, re.IGNORECASE)
@@ -162,6 +186,8 @@ def search_db(collection=None, search_string=None):
 			return get_results(Movie, {"plot" : query},[('plot',ASCENDING)])
 		elif collection == 'kmz':
 			return get_results(KMZ, {"plot" : query},[('plot',ASCENDING)])
+		elif collection == 'gif':
+			return get_results(GIF, {"plot" : query},[('plot',ASCENDING)])
 		elif collection == 'tv':
 			return get_results(TV, {"name" : query},[('series',ASCENDING)])
 		elif collection == 'books':
@@ -174,6 +200,8 @@ def search_db(collection=None, search_string=None):
 			return get_all(Movie,[('name',ASCENDING)])
 		elif collection == 'kmz':
 			return get_all(KMZ,[('name',ASCENDING)])
+		elif collection == 'gif':
+			return get_all(GIF,[('name',ASCENDING)])
 		elif collection == 'tv':
 			return get_all(TV,[('series',ASCENDING)])
 		elif collection == 'books':
@@ -211,6 +239,18 @@ def remove_kmz(file_path=None,filename=None):
 
 	if (not (filename is None)):
 			KMZ(
+				file = filename,
+				# file_id is primary key!
+				file_id = filename,
+			).delete()
+
+	return "success"
+
+def remove_gif(file_path=None,filename=None):
+	print ('db_utils: remove_kmz')
+
+	if (not (filename is None)):
+			GIF(
 				file = filename,
 				# file_id is primary key!
 				file_id = filename,
@@ -333,6 +373,28 @@ def verifyZipfileMetadata(zipfilepath, kmlfilename):
 
 	return myMetadata
 
+def verifyGIFfileMetadata(gifFilePath):
+	myMetadata = None
+
+	cmdStr = 'exiftool -comment '+gifFilePath+' | cut -d\':\' -f2-'
+	print("cmdStr:", cmdStr)
+
+	# subprocess.run only available in python 3.5, this is currently running in python 2.7
+	# result = subprocess.run(cmdArgs, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+
+	# Do not use stderr=PIPE with this function as that can deadlock based on the child process error
+	result = subprocess.check_output(cmdStr, shell=True)
+
+	# std* is byte sequence, but json in Python 3.5.2 requires str
+	metadataStr = str(result,'utf-8')
+
+	print('metadataStr:',metadataStr)
+	myMetadata = json.loads(metadataStr)
+
+	# print(json.dumps(myMetadata, indent=4)) # pretty print
+
+	return myMetadata
+
 def update_kmz(file_path=None,filename=None):
 	print ('db_utils: update_kmz')
 
@@ -356,6 +418,44 @@ def update_kmz(file_path=None,filename=None):
 				# fields for AtmosphericDataSolutions weather videos
 				ensemble = myMetadata['ensemble'],
 				boundary_condition = myMetadata['boundary-condition'],
+				init_date = myMetadata['init'],
+				plot = myMetadata['plot'],
+				plot_group = myMetadata['plot_group']
+
+			).save()
+		else:
+			print('file:',item['name'],' metadata error!')
+
+	return "success"
+
+def update_gif(file_path=None,filename=None):
+
+	files_list = rescan_base_dir(file_path,filename)
+
+	# check gif files for metadata using exiftool
+	for item in files_list:
+		print('file:',item)
+
+		myMetadata = verifyGIFfileMetadata(item['path'])
+
+		# {
+		#     "init": "2020-05-28T00:00:00",
+		#     "plot": "Cajon Pass - wind vector projection",
+		#     "plot_group": "Cross Section Plots",
+		#     "ensemble": "001",
+		#     "boundary_condition": "gfs"
+		# }
+
+		if not (myMetadata is None):
+			GIF(
+				path    = item['path'],
+				file    = item['file'],
+				name    = item['name'],
+				# file_id is primary key!
+				file_id = item['file'],
+				# fields for AtmosphericDataSolutions weather gifs
+				ensemble = myMetadata['ensemble'],
+				boundary_condition = myMetadata['boundary_condition'],
 				init_date = myMetadata['init'],
 				plot = myMetadata['plot'],
 				plot_group = myMetadata['plot_group']

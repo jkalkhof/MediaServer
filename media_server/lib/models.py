@@ -75,7 +75,22 @@ class KMZ(MongoModel):
 	init_date 			= DateTimeField()
 	plot				= CharField()
 	plot_group 			= CharField()
-	
+
+# for animated gif files - rendered from cross section plots by NCL and assembled using graphicsmagick
+class GIF(MongoModel):
+	path                 = CharField()
+	file                 = CharField()
+	name                 = CharField()
+	file_id = CharField(primary_key=True)
+
+	# fields for AtmosphericDataSolutions weather videos
+	ensemble 			= CharField()
+	boundary_condition  = CharField()
+	init_date 			= DateTimeField()
+	plot				= CharField()
+	plot_group 			= CharField()
+
+
 class TV(MongoModel):
 	path	= CharField()
 	file_id = CharField(primary_key=True)

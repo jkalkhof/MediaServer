@@ -39,6 +39,11 @@ def remove_file(folder=None,filename=None):
 			print('remove_file: filename:',filename)
 			remove_kmz('media_server/kmz',filename)
 			return "success"
+	elif folder == 'gif':
+		if filename is not None:
+			print('remove_file: filename:',filename)
+			remove_gif('media_server/gif',filename)
+			return "success"
 
 	return "error"
 
@@ -55,6 +60,9 @@ def rescan_dir(folder=None,filename=None):
 		return "success"
 	elif folder == 'kmz':
 		update_kmz('media_server/kmz')
+		return "success"
+	elif folder == 'gif':
+		update_gif('media_server/gif')
 		return "success"
 	elif folder == 'tv':
 		update_tv('media_server/tv')
@@ -106,6 +114,12 @@ def search(collection=None,search_string=None):
 					plot=plot)
 			elif collection == 'kmz':
 				listData = search_db_kmz_extended(ensemble=ensemble,\
+					boundary_condition=boundary_condition,\
+					init_date=init_date,\
+					plot_group=plot_group,\
+					plot=plot)
+			elif collection == 'gif':
+				listData = search_db_gif_extended(ensemble=ensemble,\
 					boundary_condition=boundary_condition,\
 					init_date=init_date,\
 					plot_group=plot_group,\
