@@ -389,7 +389,12 @@ def verifyGIFfileMetadata(gifFilePath):
 	metadataStr = str(result,'utf-8')
 
 	print('metadataStr:',metadataStr)
-	myMetadata = json.loads(metadataStr)
+
+	# try/except block here to handle corrupted files missing metadata
+	try:
+		myMetadata = json.loads(metadataStr)
+	except Exception as ex:
+		print('verifyGIFfileMetadata: exception on file:',gifFilePath,' ex:',ex)
 
 	# print(json.dumps(myMetadata, indent=4)) # pretty print
 
