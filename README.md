@@ -113,3 +113,20 @@ server {
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
+
+#### run as a docker container
+```
+sudo docker build -t mediaserver-app .
+
+# test run docker image
+  # -i 	Keep STDIN open even if not attached
+  # -t 	Allocate a pseudo-TTY
+  # --rm 	remove container when it exits
+  # -p 	Publish a container's port(s) to the host
+  # --name 	Assign a name to the container
+  # --env		set environment variable
+  # --network="host"  run within docker host network so docker container can contat mysql server on port 3306
+  sudo docker run -it --rm --network="host" -p 3031:3031 --name my-running-mediaserver-app mediaserver-app
+
+
+```

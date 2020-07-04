@@ -20,7 +20,6 @@ intervals==0.8.1
 itsdangerous==1.1.0
 Jinja2==2.10.3
 MarkupSafe==1.1.1
--e git+https://github.com/jkalkhof/MediaServer.git@df3bd485fd73d52e6b6a0728751619ba240013af#egg=media_server
 mongoengine==0.19.1
 monotonic==1.5
 nodejs==0.1.1
