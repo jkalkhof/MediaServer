@@ -2,8 +2,8 @@
 # FROM jrottenberg/ffmpeg:4.1-scratch
 FROM jrottenberg/ffmpeg:4.1-ubuntu AS ffmpeg
 
-# mongo for database
-FROM mongo:3.6-xenial AS mongo
+# mongo for database - run this in another container
+#FROM mongo:3.6-xenial AS mongo
 
 # LAST FROM is the BASE IMAGE
 # uwsgi flask and nginx

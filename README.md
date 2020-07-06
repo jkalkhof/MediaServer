@@ -132,4 +132,16 @@ sudo docker build -t mediaserver-app .
   # https://docs.docker.com/storage/bind-mounts/
   sudo docker run -it --mount src="/var/www/drive/",target=/var/www/drive,type=bind --rm --network="host" -p 3031:3031 -p 8400:8400 --name my-running-mediaserver-app mediaserver-app
 
+  # run mongodb in a separate container
+  sudo docker run -it --network="host" --name mongo -d mongo:3.6-xenial
+
+  # connect to conainer running mongo and look around...
+  sudo docker exec -it mongo  bash
+  # mongo
+  # > show databases
+  # use media-server
+  # show collections
+  # db.movie.find()
+  
+
 ```
