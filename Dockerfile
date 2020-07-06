@@ -1,6 +1,17 @@
-FROM mongo:3.6-xenial
-#FROM tiangolo/uwsgi-nginx:python3.8
+# ffmpeg for ffprobe query metadata
+# FROM jrottenberg/ffmpeg:4.1-scratch
+FROM jrottenberg/ffmpeg:4.1-ubuntu AS ffmpeg
+
+# mongo for database
+FROM mongo:3.6-xenial AS mongo
+
+# LAST FROM is the BASE IMAGE
+# uwsgi flask and nginx
 FROM tiangolo/uwsgi-nginx-flask:python3.8
+
+#COPY --from=ffmpeg / /
+ENV LD_LIBRARY_PATH=/usr/local/lib
+COPY --from=ffmpeg /usr/local /usr/local/
 
 COPY ./media-server-docker.ini /app/uwsgi.ini
 COPY ./media_server /app/media_server
@@ -11,8 +22,14 @@ COPY ./requirements.txt /app
 
 RUN pip install -r requirements.txt
 
-# how do I start this stupid thing?
-# CMD [ "/app/startup.sh" ]
-# CMD [ "uwsgi" ]
-#cmd [ "pip", "install", "-e", "."]
-CMD [ "uwsgi", "--http-socket", "127.0.0.1:3031" ]
+# nginx server configuration
+COPY ./media-server.conf /etc/nginx/conf.d/media-server.conf
+
+# serve static pages with nginx
+ENV STATIC_INDEX 1
+COPY ./static /app/static
+
+# only startup uwsgi - no static nginx
+#CMD [ "uwsgi", "--http-socket", "127.0.0.1:3031" ]
+# startup nginx, and flask uwsgi
+CMD ["/app/startup.sh"]

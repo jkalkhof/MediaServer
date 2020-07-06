@@ -128,5 +128,8 @@ sudo docker build -t mediaserver-app .
   # --network="host"  run within docker host network so docker container can contat mysql server on port 3306
   sudo docker run -it --rm --network="host" -p 3031:3031 --name my-running-mediaserver-app mediaserver-app
 
+  # add bind mounts to see local filesystem for media files
+  # https://docs.docker.com/storage/bind-mounts/
+  sudo docker run -it --mount src="/var/www/drive/",target=/var/www/drive,type=bind --rm --network="host" -p 3031:3031 -p 8400:8400 --name my-running-mediaserver-app mediaserver-app
 
 ```
