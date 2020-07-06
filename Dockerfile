@@ -9,9 +9,13 @@ FROM mongo:3.6-xenial AS mongo
 # uwsgi flask and nginx
 FROM tiangolo/uwsgi-nginx-flask:python3.8
 
+# install binaries from ffmpeg image
 #COPY --from=ffmpeg / /
 ENV LD_LIBRARY_PATH=/usr/local/lib
 COPY --from=ffmpeg /usr/local /usr/local/
+
+# install exiftool for gif file metadata
+RUN apt-get update && apt-get install -y libimage-exiftool-perl
 
 COPY ./media-server-docker.ini /app/uwsgi.ini
 COPY ./media_server /app/media_server
