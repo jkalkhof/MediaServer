@@ -142,6 +142,8 @@ sudo docker build -t mediaserver-app .
   # use media-server
   # show collections
   # db.movie.find()
+
+  mkdir /home/homeuser/source/ads/MediaServer/datadir
   
 
 ```
