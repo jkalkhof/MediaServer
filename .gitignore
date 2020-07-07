@@ -12,5 +12,4 @@ media_server/tv
 media_server/movies
 media_server/allitebooks
 ffmpeg.log
-index.html
 testenv/*
