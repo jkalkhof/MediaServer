@@ -30,8 +30,12 @@ RUN pip install -r requirements.txt
 COPY ./media-server.conf /etc/nginx/conf.d/media-server.conf
 
 # serve static pages with nginx
-ENV STATIC_INDEX 1
-COPY ./static /app/static
+#ENV STATIC_INDEX 1
+#COPY ./static /app/static
+
+# change default port 
+# don't listen on port 80, it will conflict with other server running there
+ENV LISTEN_PORT 8400
 
 # only startup uwsgi - no static nginx
 #CMD [ "uwsgi", "--http-socket", "127.0.0.1:3031" ]

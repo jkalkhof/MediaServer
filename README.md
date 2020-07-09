@@ -132,8 +132,17 @@ sudo docker build -t mediaserver-app .
   # https://docs.docker.com/storage/bind-mounts/
   sudo docker run -it --mount src="/var/www/drive/",target=/var/www/drive,type=bind --rm --network="host" -p 3031:3031 -p 8400:8400 --name my-running-mediaserver-app mediaserver-app
 
+  # connect to container running medaia-server and look around.
+  sudo docker exec -it my-running-mediaserver-app bash
+
   # run mongodb in a separate container
-  sudo docker run -it --network="host" --name mongo -d mongo:3.6-xenial
+  # interactive mode
+  # mount directory /home/homeuser/source/ads/MediaServer/datadir
+  sudo docker run -it --rm --mount src="/home/homeuser/source/ads/MediaServer/datadir",target="/data/db",type=bind --network="host" --name mongo mongo:3.6-xenial  
+
+  # stop mongodb container
+  sudo docker container stop mongo
+  sudo docker container rm mongo
 
   # connect to conainer running mongo and look around...
   sudo docker exec -it mongo  bash
@@ -144,6 +153,6 @@ sudo docker build -t mediaserver-app .
   # db.movie.find()
 
   mkdir /home/homeuser/source/ads/MediaServer/datadir
-  
+
 
 ```
