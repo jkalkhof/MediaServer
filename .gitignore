@@ -13,3 +13,4 @@ media_server/movies
 media_server/allitebooks
 ffmpeg.log
 testenv/*
+datadir/*
