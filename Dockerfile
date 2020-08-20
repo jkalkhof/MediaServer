@@ -15,7 +15,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 COPY --from=ffmpeg /usr/local /usr/local/
 
 # install exiftool for gif file metadata
-RUN apt-get update && apt-get install -y libimage-exiftool-perl
+RUN apt-get update && apt-get install -y libimage-exiftool-perl vim
 
 COPY ./media-server-docker.ini /app/uwsgi.ini
 COPY ./media_server /app/media_server
@@ -33,7 +33,7 @@ COPY ./media-server.conf /etc/nginx/conf.d/media-server.conf
 #ENV STATIC_INDEX 1
 #COPY ./static /app/static
 
-# change default port 
+# change default port
 # don't listen on port 80, it will conflict with other server running there
 ENV LISTEN_PORT 8400
 
