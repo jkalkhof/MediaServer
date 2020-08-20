@@ -26,6 +26,12 @@ COPY ./requirements.txt /app
 
 RUN pip install -r requirements.txt
 
+# update directory links
+# this fails if local copy of media_server dir has links to /var/www/drive !
+# RUN ln -s /var/www/drive/kmz media_server/kmz && \
+# 		ln -s /var/www/drive/movies media_server/movies && \
+# 		ln -s /var/www/drive/gif media_server/gif
+
 # nginx server configuration
 COPY ./media-server.conf /etc/nginx/conf.d/media-server.conf
 
