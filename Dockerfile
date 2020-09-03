@@ -43,6 +43,12 @@ COPY ./media-server.conf /etc/nginx/conf.d/media-server.conf
 # don't listen on port 80, it will conflict with other server running there
 ENV LISTEN_PORT 8400
 
+# tell nginx to run virtual host called media-server
+ENV MEDIASERVER media-server
+
+# run mod_wsgi and nginx at this level 
+ENV NICE_LEVEL 10
+
 # only startup uwsgi - no static nginx
 #CMD [ "uwsgi", "--http-socket", "127.0.0.1:3031" ]
 # startup nginx, and flask uwsgi

@@ -23,7 +23,7 @@ chmod 755 /var/www/drive/gif
 chmod 755 /var/www/drive/movies
 
 echo "starting nginx"
-service nginx start &
+nice -n $NICE_LEVEL service nginx start &
 
 echo "starting wsgi"
-uwsgi --http-socket 127.0.0.1:3031
+nice -n $NICE_LEVEL uwsgi --http-socket 127.0.0.1:3031
