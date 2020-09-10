@@ -408,28 +408,46 @@ def update_kmz(file_path=None,filename=None):
 	# check video files for metadata using ffprobe
 	kmlfilename = 'ads-plot-timeseries.kml'
 	for item in files_list:
-		print('file:',item)
+		# file: {'path': 'media_server/kmz/40312164.kmz', 'file': '40312164.kmz', 'name': '40312164'}
+		# print('file:',item)
 
-		# TODO: use Zipfile to extract metadata from each file for database
-		myMetadata = verifyZipfileMetadata(item['path'],kmlfilename)
+		# optimize update operation
+		# check if file exists in KMZ database table first!
+		# https://pymodm.readthedocs.io/en/stable/getting-started.html
+		results = KMZ.objects.raw({"file" : item['file']})
+		json_results = []
+		for resultItem in results:
+			item_son = resultItem.to_son()
+			# print('get_results_no_jsonencode:(to_son)',item_son)
+			json_results.append(item_son.to_dict())
 
-		if not (myMetadata is None):
-			KMZ(
-				path    = item['path'],
-				file    = item['file'],
-				name    = item['name'],
-				# file_id is primary key!
-				file_id = item['file'],
-				# fields for AtmosphericDataSolutions weather videos
-				ensemble = myMetadata['ensemble'],
-				boundary_condition = myMetadata['boundary-condition'],
-				init_date = myMetadata['init'],
-				plot = myMetadata['plot'],
-				plot_group = myMetadata['plot_group']
+		# print('update_kmz: json_results:',json_results)
 
-			).save()
+		if (len(json_results) == 0):
+			# scan in new file, since it doesn't exist in the database
+
+			# use Zipfile to extract metadata from each file for database
+			myMetadata = verifyZipfileMetadata(item['path'],kmlfilename)
+
+			if not (myMetadata is None):
+				KMZ(
+					path    = item['path'],
+					file    = item['file'],
+					name    = item['name'],
+					# file_id is primary key!
+					file_id = item['file'],
+					# fields for AtmosphericDataSolutions weather videos
+					ensemble = myMetadata['ensemble'],
+					boundary_condition = myMetadata['boundary-condition'],
+					init_date = myMetadata['init'],
+					plot = myMetadata['plot'],
+					plot_group = myMetadata['plot_group']
+
+				).save()
+			else:
+				print('file:',item['name'],' metadata error!')
 		else:
-			print('file:',item['name'],' metadata error!')
+			print('file:',item['name'],' already exists in db')
 
 	return "success"
 
@@ -486,7 +504,7 @@ def update_gif(file_path=None,filename=None):
 				print('file:',item['name'],' metadata error!')
 		else:
 			print('file:',item['name'],' already exists in db')
-			
+
 	return "success"
 
 
