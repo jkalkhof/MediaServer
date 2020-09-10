@@ -439,36 +439,54 @@ def update_gif(file_path=None,filename=None):
 
 	# check gif files for metadata using exiftool
 	for item in files_list:
-		print('file:',item)
+		# item: {'path': 'media_server/gif/50826285.gif', 'file': '50826285.gif', 'name': '50826285'}
+		# print('update_gif: file:',item['file'])
 
-		myMetadata = verifyGIFfileMetadata(item['path'])
+		# optimize update operation
+		# currently exiftool used in verifyGIFfileMetadata takes 1 second per file
+		# check if file exists in GIF database table first!
+		# https://pymodm.readthedocs.io/en/stable/getting-started.html
+		results = GIF.objects.raw({"file" : item['file']})
+		json_results = []
+		for resultItem in results:
+			item_son = resultItem.to_son()
+			# print('get_results_no_jsonencode:(to_son)',item_son)
+			json_results.append(item_son.to_dict())
 
-		# {
-		#     "init": "2020-05-28T00:00:00",
-		#     "plot": "Cajon Pass - wind vector projection",
-		#     "plot_group": "Cross Section Plots",
-		#     "ensemble": "001",
-		#     "boundary_condition": "gfs"
-		# }
+		# print('update_gif: json_results:',json_results)
 
-		if not (myMetadata is None):
-			GIF(
-				path    = item['path'],
-				file    = item['file'],
-				name    = item['name'],
-				# file_id is primary key!
-				file_id = item['file'],
-				# fields for AtmosphericDataSolutions weather gifs
-				ensemble = myMetadata['ensemble'],
-				boundary_condition = myMetadata['boundary_condition'],
-				init_date = myMetadata['init'],
-				plot = myMetadata['plot'],
-				plot_group = myMetadata['plot_group']
+		if (len(json_results) == 0):
+			# scan in new file, since it doesn't exist in the database
+			myMetadata = verifyGIFfileMetadata(item['path'])
 
-			).save()
+			# {
+			#     "init": "2020-05-28T00:00:00",
+			#     "plot": "Cajon Pass - wind vector projection",
+			#     "plot_group": "Cross Section Plots",
+			#     "ensemble": "001",
+			#     "boundary_condition": "gfs"
+			# }
+
+			if not (myMetadata is None):
+				GIF(
+					path    = item['path'],
+					file    = item['file'],
+					name    = item['name'],
+					# file_id is primary key!
+					file_id = item['file'],
+					# fields for AtmosphericDataSolutions weather gifs
+					ensemble = myMetadata['ensemble'],
+					boundary_condition = myMetadata['boundary_condition'],
+					init_date = myMetadata['init'],
+					plot = myMetadata['plot'],
+					plot_group = myMetadata['plot_group']
+
+				).save()
+			else:
+				print('file:',item['name'],' metadata error!')
 		else:
-			print('file:',item['name'],' metadata error!')
-
+			print('file:',item['name'],' already exists in db')
+			
 	return "success"
 
 

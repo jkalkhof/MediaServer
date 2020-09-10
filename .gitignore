@@ -10,7 +10,10 @@ media_server/generate_streams.sh
 media_server/templates/views/stream.html
 media_server/tv
 media_server/movies
+media_server/gif
+media_server/kmz
 media_server/allitebooks
 ffmpeg.log
 testenv/*
 datadir/*
+__pycache__
