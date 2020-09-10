@@ -3,4 +3,10 @@
 .cache
 # for mongo database storage
 datadir
+media_server/tv
+media_server/movies
+media_server/gif
+media_server/kmz
+media_server/allitebooks
+
 
