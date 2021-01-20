@@ -64,6 +64,9 @@ def rescan_dir(folder=None,filename=None):
 	elif folder == 'gif':
 		update_gif('media_server/gif')
 		return "success"
+	elif folder == 'png':
+		update_png('media_server/png')
+		return "success"
 	elif folder == 'tv':
 		update_tv('media_server/tv')
 		return "success"

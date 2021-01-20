@@ -90,6 +90,17 @@ class GIF(MongoModel):
 	plot				= CharField()
 	plot_group 			= CharField()
 
+# for png files - station statistics png plot files
+# rendered using python matlib.plot and metadata added using exiftool
+class PNG(MongoModel):
+	path                 = CharField()
+	file                 = CharField()
+	name                 = CharField()
+	file_id = CharField(primary_key=True)
+
+	# fields for AtmosphericDataSolutions weather videos
+	stnid 				= CharField()
+	plot_type			= CharField()
 
 class TV(MongoModel):
 	path	= CharField()

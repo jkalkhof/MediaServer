@@ -11,15 +11,17 @@ echo "update server_name in nginx configuration"
 sed -i -e 's/server_name media-server;/server_name '"$MEDIASERVER"';/' /etc/nginx/conf.d/media-server.conf
 
 echo "creating links"
-ln -s /var/www/drive/kmz media_server/kmz
-ln -s /var/www/drive/movies media_server/movies
-ln -s /var/www/drive/gif media_server/gif
+ln -s /var/www/drive/kmz /app/media_server/kmz
+ln -s /var/www/drive/movies /app/media_server/movies
+ln -s /var/www/drive/gif /app/media_server/gif
+ln -s /var/www/drive/png /app/media_server/png
 
 echo "fix permissions on directories"
 chown -R root /var/www/drive
 chmod 755 /var/www/drive
 chmod 755 /var/www/drive/kmz
 chmod 755 /var/www/drive/gif
+chmod 755 /var/www/drive/png
 chmod 755 /var/www/drive/movies
 
 echo "starting nginx"

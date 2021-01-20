@@ -400,6 +400,34 @@ def verifyGIFfileMetadata(gifFilePath):
 
 	return myMetadata
 
+def verifyPNGfileMetadata(pngFilePath):
+	myMetadata = None
+
+	cmdStr = 'exiftool -comment '+pngFilePath+' | cut -d\':\' -f2-'
+	print("cmdStr:", cmdStr)
+
+	# subprocess.run only available in python 3.5, this is currently running in python 2.7
+	# result = subprocess.run(cmdArgs, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+
+	# Do not use stderr=PIPE with this function as that can deadlock based on the child process error
+	result = subprocess.check_output(cmdStr, shell=True)
+
+	# std* is byte sequence, but json in Python 3.5.2 requires str
+	metadataStr = str(result,'utf-8')
+
+	print('metadataStr:',metadataStr)
+
+	# try/except block here to handle corrupted files missing metadata
+	try:
+		myMetadata = json.loads(metadataStr)
+	except Exception as ex:
+		print('verifyPNGfileMetadata: exception on file:',pngFilePath,' ex:',ex)
+
+	# print(json.dumps(myMetadata, indent=4)) # pretty print
+
+	return myMetadata
+
+
 def update_kmz(file_path=None,filename=None):
 	print ('db_utils: update_kmz')
 
@@ -507,6 +535,54 @@ def update_gif(file_path=None,filename=None):
 
 	return "success"
 
+def update_png(file_path=None,filename=None):
+
+	files_list = rescan_base_dir(file_path,filename)
+
+	# check gif files for metadata using exiftool
+	for item in files_list:
+		# item: {'path': 'media_server/gif/50826285.gif', 'file': '50826285.gif', 'name': '50826285'}
+		print('update_png: file:',item['file'])
+
+		results = PNG.objects.raw({"file" : item['file']})
+		json_results = []
+		for resultItem in results:
+			item_son = resultItem.to_son()
+			# print('get_results_no_jsonencode:(to_son)',item_son)
+			json_results.append(item_son.to_dict())
+
+		print('update_png: json_results:',json_results)
+
+		if (len(json_results) == 0):
+			# scan in new file, since it doesn't exist in the database
+			myMetadata = verifyPNGfileMetadata(item['path'])
+
+			# {
+			#     "init": "2020-05-28T00:00:00",
+			#     "plot": "Cajon Pass - wind vector projection",
+			#     "plot_group": "Cross Section Plots",
+			#     "ensemble": "001",
+			#     "boundary_condition": "gfs"
+			# }
+
+			if not (myMetadata is None):
+				PNG(
+					path    = item['path'],
+					file    = item['file'],
+					name    = item['name'],
+					# file_id is primary key!
+					file_id = item['file'],
+					# fields for AtmosphericDataSolutions station statistics
+					stnid = myMetadata['stnid'],
+					plot_type = myMetadata['plot_type'],
+
+				).save()
+			else:
+				print('file:',item['name'],' metadata error!')
+		else:
+			print('file:',item['name'],' already exists in db')
+
+	return "success"
 
 def update_tv(file_path=None):
 	files_list = rescan_base_dir(file_path)
