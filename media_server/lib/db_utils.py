@@ -28,10 +28,11 @@ def get_results(Object=None,query_obj=None,sort=None):
 			item_son = item.to_son()
 			# print('get_results:(to_son)',item_son)
 
-			date_time_obj = item_son['init_date']
-			output_format="%Y-%m-%dT%H:%M:%S"
-			dateStr = date_time_obj.strftime(output_format)
-			item_son['init_date'] = dateStr
+			if 'init_date' in item_son:
+				date_time_obj = item_son['init_date']
+				output_format="%Y-%m-%dT%H:%M:%S"
+				dateStr = date_time_obj.strftime(output_format)
+				item_son['init_date'] = dateStr
 
 			print('get_results:(to_son)',item_son)
 

@@ -254,6 +254,37 @@ load_content = (category,mode) => {
 
 				});
 			}
+			else if (category == 'png') {
+				data.forEach( (entry) => {
+					// instead of using build_item
+					entry = JSON.parse(entry);
+
+					// see static/css/styles.css for definitions of header, content classes
+					let item = document.createElement('div');
+					item.className = "item";
+
+					let header = document.createElement('div');
+					header.className = 'header hide';
+					header.id = entry['file'];
+					// header.innerText = entry['stnid'];
+					header.innerText = entry['stnid']+entry['plot_type'];
+
+					let a = document.createElement('a');
+					a.href = `png/${entry['file']}`;
+					// a.innerText = entry['stnid'];
+					a.innerText = entry['stnid']+' '+entry['plot_type'];
+
+					header.innerHTML = a.outerHTML;
+
+					let content = document.createElement('div');
+					content.className = 'content';
+
+					item.appendChild(header);
+					item.appendChild(content);
+					results.appendChild(item);
+
+				});
+			}
 			else if (category == 'tv') {
 				data.forEach( (entry) => {
 					entry = JSON.parse(entry);
@@ -318,6 +349,8 @@ switch_tab = (elem) => {
 		category = 'kmz';
 	} else if (elem.classList.contains('gif')) {
 		category = 'gif';
+	} else if (elem.classList.contains('png')) {
+		category = 'png';
 	} else if (elem.classList.contains('tv')) {
 		category = 'tv';
 	} else if (elem.classList.contains('books')) {
