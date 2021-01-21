@@ -17,14 +17,14 @@ COPY --from=ffmpeg /usr/local /usr/local/
 # install exiftool for gif file metadata
 RUN apt-get update && apt-get install -y libimage-exiftool-perl vim
 
+COPY ./requirements.txt /app
+RUN pip install -r requirements.txt
+
 COPY ./media-server-docker.ini /app/uwsgi.ini
 COPY ./media_server /app/media_server
 COPY ./setup.py /app
 COPY ./wsgi.py /app
 COPY ./startup.sh /app
-COPY ./requirements.txt /app
-
-RUN pip install -r requirements.txt
 
 # update directory links
 # this fails if local copy of media_server dir has links to /var/www/drive !
@@ -46,7 +46,7 @@ ENV LISTEN_PORT 8400
 # tell nginx to run virtual host called media-server
 ENV MEDIASERVER media-server
 
-# run mod_wsgi and nginx at this level 
+# run mod_wsgi and nginx at this level
 ENV NICE_LEVEL 10
 
 # only startup uwsgi - no static nginx

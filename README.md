@@ -98,19 +98,57 @@ server {
 #### Apache2 Sample Config
 ```
 <VirtualHost *:80>
-    ServerName media-server
-    ServerAlias media-server
+	#ServerAdmin admin@example.com
+	ServerName media-server
+	ServerAlias media-server
 
-		# socket feature needs version 2.4.9
-		#ProxyPass / unix:/tmp/media-server.sock
+	#DocumentRoot /var/www/html
+	# socket feature needs version 2.4.9
+	#ProxyPass / unix:/tmp/media-server.sock
+	#ProxyPass / uwsgi://127.0.0.1:3031/
+	ProxyPassMatch ^/movies !
+	ProxyPassMatch ^/kmz !
+	ProxyPassMatch ^/gif !
+	ProxyPassMatch ^/png !
+	ProxyPass / http://127.0.0.1:3031/
 
-		ProxyPassMatch ^/movies !
-		ProxyPass / http://127.0.0.1:3031/
+	Alias "/movies" "/var/www/drive/movies"
+	Alias "/kmz" "/var/www/drive/kmz"
+	Alias "/gif" "/var/www/drive/gif"
+	Alias "/png" "/var/www/drive/png"
 
-		Alias "/movies" "/var/www/drive/movies"
+	 <Directory /var/www/drive/gif/ >
+			#Options Indexes FollowSymLinks
+			#AllowOverride None
+			#AllowOverride all
+			#Allow from all
+			#Require all granted
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+			Header set Referrer-Policy "origin"
+			Header set Access-Control-Allow-Origin "*"
+			Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+			Header set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, crossdomain, access-control-allow-origin, x-csrf-token"
+
+			#<Files "*.gif">
+			<Files ~ "\.(gif|jpe?g|png)$">
+				Header set Referrer-Policy "origin"
+				#Header set Access-Control-Allow-Origin "*"
+				Header setifempty Access-Control-Allow-Origin "*"
+			</Files>
+	 </Directory>
+
+
+	Header set Referrer-Policy "origin"
+	Header set Access-Control-Allow-Origin "*"
+	Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+	Header set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token, crossdomain, access-control-allow-origin, x-csrf-token"
+
+
+	#ErrorLog /var/log/httpd/error.log
+	#CustomLog /var/log/httpd/access.log combined
+
+	#ErrorLog ${APACHE_LOG_DIR}/error.log
+	#CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
 
