@@ -66,10 +66,11 @@ def get_results_no_jsonencode(Object=None,query_obj=None,sort=None):
 
 			item_son = item.to_son()
 
-			date_time_obj = item_son['init_date']
-			output_format="%Y-%m-%dT%H:%M:%S"
-			dateStr = date_time_obj.strftime(output_format)
-			item_son['init_date'] = dateStr
+			if 'init_date' in item_son:
+				date_time_obj = item_son['init_date']
+				output_format="%Y-%m-%dT%H:%M:%S"
+				dateStr = date_time_obj.strftime(output_format)
+				item_son['init_date'] = dateStr
 
 			print('get_results_no_jsonencode:(to_son)',item_son)
 
@@ -88,10 +89,11 @@ def get_all(Object=None,sort=None):
 
 			item_son = item.to_son()
 
-			date_time_obj = item_son['init_date']
-			output_format="%Y-%m-%dT%H:%M:%S"
-			dateStr = date_time_obj.strftime(output_format)
-			item_son['init_date'] = dateStr
+			if 'init_date' in item_son:
+				date_time_obj = item_son['init_date']
+				output_format="%Y-%m-%dT%H:%M:%S"
+				dateStr = date_time_obj.strftime(output_format)
+				item_son['init_date'] = dateStr
 
 			print('get_all:(to_son)',item_son)
 
@@ -177,6 +179,15 @@ def search_db_gif_extended(ensemble=None,boundary_condition=None,init_date=None,
 		{"plot":plot},\
 		]},[('plot',ASCENDING)])
 
+def search_db_png_extended(stnid=None):
+	print('search_db_png_extended: stnid:',stnid)
+
+	# STRATEGY - build up the query in parts, testing as we go...
+
+	return get_results_no_jsonencode(PNG,\
+		{"stnid":stnid},\
+		[('stnid',ASCENDING)])
+
 def search_db(collection=None, search_string=None):
 	if search_string is not None:
 		query = re.compile(search_string, re.IGNORECASE)
@@ -188,13 +199,15 @@ def search_db(collection=None, search_string=None):
 			return get_results(KMZ, {"plot" : query},[('plot',ASCENDING)])
 		elif collection == 'gif':
 			return get_results(GIF, {"plot" : query},[('plot',ASCENDING)])
+		elif collection == 'png':
+			return get_results(PNG, {"stnid" : query},[('plot_type',ASCENDING)])
 		elif collection == 'tv':
 			return get_results(TV, {"name" : query},[('series',ASCENDING)])
 		elif collection == 'books':
 			return get_results(Book, {"name" : query},[('name',ASCENDING)])
 		else:
-			print("Invalid Collection: " + collection)
-			return "Invalid Collection: " + collection
+			print("Invalid Collection: " + collection+" using search:"+search_string)
+			return "Invalid Collection: " + collection+" using search:"+search_string
 	else:
 		if collection == 'movies':
 			return get_all(Movie,[('name',ASCENDING)])
@@ -202,6 +215,8 @@ def search_db(collection=None, search_string=None):
 			return get_all(KMZ,[('name',ASCENDING)])
 		elif collection == 'gif':
 			return get_all(GIF,[('name',ASCENDING)])
+		elif collection == 'png':
+			return get_all(PNG,[('name',ASCENDING)])
 		elif collection == 'tv':
 			return get_all(TV,[('series',ASCENDING)])
 		elif collection == 'books':

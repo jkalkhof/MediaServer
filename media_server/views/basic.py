@@ -89,6 +89,7 @@ def search(collection=None,search_string=None):
 	init_date = request.args.get('init_date', default = None, type = str)
 	plot_group = request.args.get('plot_group', default = None, type = str)
 	plot = request.args.get('plot', default = None, type = str)
+	stnid = request.args.get('stnid', default = None, type = str)
 
 	print('basic: search: collection:', collection)
 	print('basic: search_string:',search_string)
@@ -99,6 +100,7 @@ def search(collection=None,search_string=None):
 	print('basic: search: init_date:', init_date)
 	print('basic: search: plot_group:', plot_group)
 	print('basic: search: plot:', plot)
+	print('basic: search: stnid:', stnid)
 
 
 	if collection is not None:
@@ -133,6 +135,14 @@ def search(collection=None,search_string=None):
 			response.headers.add('Access-Control-Allow-Origin', '*')
 			return response
 
+		elif ((stnid is not None) and (collection == 'png')):
+			listData = []
+			listData = search_db_png_extended(stnid=stnid)
+
+			# https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
+			response = jsonify(listData)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
 		else:
 			return dumps(search_db(collection=collection,search_string=search_string))
 	else:
