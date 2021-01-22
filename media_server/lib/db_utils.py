@@ -274,6 +274,18 @@ def remove_gif(file_path=None,filename=None):
 
 	return "success"
 
+def remove_png(file_path=None,filename=None):
+	print ('db_utils: remove_png')
+
+	if (not (filename is None)):
+			PNG(
+				file = filename,
+				# file_id is primary key!
+				file_id = filename,
+			).delete()
+
+	return "success"
+
 def update_movies(file_path=None,filename=None):
 	print ('db_utils: update_movies')
 
@@ -588,10 +600,15 @@ def update_png(file_path=None,filename=None):
 					name    = item['name'],
 					# file_id is primary key!
 					file_id = item['file'],
+
 					# fields for AtmosphericDataSolutions station statistics
 					stnid = myMetadata['stnid'],
+					station_name = myMetadata['station_name'],
 					plot_type = myMetadata['plot_type'],
-
+					mesonet = myMetadata['mesonet'],
+					provider = myMetadata['provider'],
+					start_date = myMetadata['start_date'],
+					end_date = myMetadata['end_date']
 				).save()
 			else:
 				print('file:',item['name'],' metadata error!')

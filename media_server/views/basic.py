@@ -44,6 +44,11 @@ def remove_file(folder=None,filename=None):
 			print('remove_file: filename:',filename)
 			remove_gif('media_server/gif',filename)
 			return "success"
+	elif folder == 'png':
+		if filename is not None:
+			print('remove_file: filename:',filename)
+			remove_png('media_server/png',filename)
+			return "success"
 
 	return "error"
 
@@ -65,7 +70,11 @@ def rescan_dir(folder=None,filename=None):
 		update_gif('media_server/gif')
 		return "success"
 	elif folder == 'png':
-		update_png('media_server/png')
+		if filename is not None:
+			print('rescan_dir: filename:',filename)
+			update_png('media_server/png',filename)
+		else:
+			update_png('media_server/png')
 		return "success"
 	elif folder == 'tv':
 		update_tv('media_server/tv')

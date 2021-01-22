@@ -99,8 +99,13 @@ class PNG(MongoModel):
 	file_id = CharField(primary_key=True)
 
 	# fields for AtmosphericDataSolutions weather videos
-	stnid 				= CharField()
-	plot_type			= CharField()
+	stnid 			= CharField()
+	station_name    = CharField()
+	plot_type		= CharField()
+	mesonet			= CharField()
+	provider		= CharField()
+	start_date		= DateTimeField()
+	end_date 	 	= DateTimeField()
 
 class TV(MongoModel):
 	path	= CharField()
