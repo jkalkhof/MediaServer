@@ -594,6 +594,17 @@ def update_png(file_path=None,filename=None):
 			# }
 
 			if not (myMetadata is None):
+				if (not 'station_name' in myMetadata):
+					myMetadata['station_name'] = 'unknown'
+				if (not 'mesonet' in myMetadata):
+					myMetadata['mesonet'] = 'unknown'
+				if (not 'provider' in myMetadata):
+					myMetadata['provider'] = 'unknown'
+				if (not 'start_date' in myMetadata):
+					myMetadata['start_date'] = '1970-01-01 0:0:0'
+				if (not 'end_date' in myMetadata):
+					myMetadata['end_date'] = '1970-01-01 0:0:0'
+
 				PNG(
 					path    = item['path'],
 					file    = item['file'],

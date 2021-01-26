@@ -5,6 +5,9 @@ from pymodm.fields import CharField, IntegerField, BigIntegerField, ObjectIdFiel
 
 connect('mongodb://localhost:27017/media-server', connect=False)
 
+# from media_server.lib.secrets import myUsername, myPassword
+# connect('mongodb://'+myUsername+':'+myPassword+'@localhost:27017/media-server?authSource=admin', connect=False)
+
 class Genre(EmbeddedMongoModel):
 	id = IntegerField(primary_key=True)
 	name = CharField()

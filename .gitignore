@@ -13,6 +13,7 @@ media_server/movies
 media_server/gif
 media_server/kmz
 media_server/allitebooks
+media_server/lib/secrets.py
 ffmpeg.log
 testenv/*
 datadir/*
